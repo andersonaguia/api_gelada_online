@@ -1,20 +1,26 @@
-import fs from 'fs';
+import { Injectable } from '@nestjs/common';
+import { writeFile, readFile } from 'fs/promises';
 import { Beer } from 'src/beer/beer.entity';
 
+@Injectable()
 export class Database {
   private FILENAME = 'beers.json';
 
-  public getBeers(): Beer[] {
-    const beersInFile = fs.readFileSync(this.FILENAME).toString();
+  public async getBeers(): Promise<Beer[]> {
+    const beersInFile = await readFile(this.FILENAME, 'utf-8');
     const beers = JSON.parse(beersInFile);
     return beers;
   }
 
-  public writeBeer(beer: Beer) {
-    fs.writeFileSync(this.FILENAME, JSON.stringify([...this.getBeers(), beer]));
+  public async writeBeer(beer: Beer) {
+    let beers: Beer[] = await this.getBeers();
+    if (!beers) {
+      beers = [];
+    }
+    await writeFile(this.FILENAME, JSON.stringify([...beers, beer]));
   }
 
-  public writeBeers(beers: Beer[]) {
-    fs.writeFileSync(this.FILENAME, JSON.stringify(beers));
+  public async writeBeers(beers: Beer[]) {
+    await writeFile(this.FILENAME, JSON.stringify(beers));
   }
 }

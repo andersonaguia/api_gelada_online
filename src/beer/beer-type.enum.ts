@@ -1,4 +1,4 @@
-export enum TipoCerveja {
+export enum BeerType {
   LAGER,
   PILSEN,
   WEIZEN,
