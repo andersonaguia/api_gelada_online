@@ -18,4 +18,10 @@ export class BeerService {
     await this.database.writeBeer(beer);
     return beer;
   }
+
+  public async findBeers(page, size) {
+    const startPage = page < 1 ? 1 : page;
+    const beers = await this.database.getBeers();
+    return beers.slice((startPage - 1) * size, startPage * size);
+  }
 }
